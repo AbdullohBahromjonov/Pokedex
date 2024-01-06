@@ -9,10 +9,13 @@ import SwiftUI
 
 @main
 struct PokedexApp: App {
+    var viewModel = ViewModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .preferredColorScheme(.light)
+                .preferredColorScheme(.dark)
+                .environmentObject(viewModel)
         }
     }
 }

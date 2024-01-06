@@ -8,61 +8,31 @@
 import SwiftUI
 
 struct PokemonItem: View {
+    let number: String
+    let name: String
+    let type: [String]
+    let img: String
+    
     var body: some View {
         ZStack {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text("Pokemon")
+                    Text(name)
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(.black)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    Text("Pokemon")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.black)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 7)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.offWhite)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray, lineWidth: 2)
-                                        .blur(radius: 2)
-                                        .offset(x: 1, y: 1)
-                                        .mask(RoundedRectangle(cornerRadius: 10).fill(LinearGradient(colors: [Color.black, Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing)))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.white, lineWidth: 2)
-                                        .blur(radius: 2)
-                                        .offset(x: -1, y: -1)
-                                        .mask(RoundedRectangle(cornerRadius: 10).fill(LinearGradient(colors: [Color.black, Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing)))
-                                )
-                        )
-                    
-                    Text("Pokemon")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.black)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 7)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.offWhite)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray, lineWidth: 2)
-                                        .blur(radius: 2)
-                                        .offset(x: 1, y: 1)
-                                        .mask(RoundedRectangle(cornerRadius: 10).fill(LinearGradient(colors: [Color.black, Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing)))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.white, lineWidth: 2)
-                                        .blur(radius: 2)
-                                        .offset(x: -1, y: -1)
-                                        .mask(RoundedRectangle(cornerRadius: 10).fill(LinearGradient(colors: [Color.black, Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing)))
-                                )
-                        )
+                    ForEach(type, id: \.self) { t in
+                        Text(t)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.vertical, 5)
+                            .padding(.horizontal, 7)
+                            .background(
+                                Capsule()
+                                    .foregroundColor(Color(type[0]))
+                            )
+                    }
                     
                     Spacer()
                 }
@@ -73,33 +43,48 @@ struct PokemonItem: View {
             HStack {
                 Spacer()
                 
-                Image("004")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 80)
-                    .offset(x: 15, y : 20)
+                AsyncImage(
+                    url: URL(string: img.replacingOccurrences(of: "http", with: "https")),
+                    content: { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 100)
+                            .offset(x: 12, y: 20)
+                    },
+                    placeholder: {
+                        ProgressView()
+                            .offset(x: -8, y: 28)
+                    }
+                )
             }
         }
         .padding()
         .background(
             ZStack {
-                LinearGradient(colors: [Color.offWhite, Color.white], startPoint: .topLeading, endPoint: .bottomTrailing)
+                ZStack {
+                    Color(type[0])
+                    Color.black.opacity(0.2)
+                }
                 
-                Image("Pokemon")
+                Image("Pokemon w")
                     .resizable()
                     .frame(width: 100, height: 100)
-                    .opacity(0.35)
+                    .opacity(0.3)
                     .offset(x: 50, y: 30)
             }
         )
         .clipShape(RoundedRectangle(cornerRadius: 15))
-        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 7, y: 7)
-        .shadow(color: Color.white.opacity(0.7), radius: 5, x: -5, y: -5)
         .padding(4)
     }
 }
 
 #Preview {
-    PokemonItem()
-        .frame(width: 180, height: 100)
+    PokemonItem(
+        number: "001",
+        name: "Pikachu",
+        type: ["Grass", "Water"],
+        img: "http://www.serebii.net/pokemongo/pokemon/001.png"
+    )
+    .frame(width: 180, height: 100)
 }
