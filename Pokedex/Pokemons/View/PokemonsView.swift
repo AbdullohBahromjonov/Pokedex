@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PokemonsView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @EnvironmentObject var viewModel: ViewModel
     
     let pokemons: [Pokemon]
@@ -25,7 +25,9 @@ struct PokemonsView: View {
                 columns: columns,
                 content: {
                     ForEach(pokemons, id: \.id) { pokemon in
-                        NavigationLink(value: pokemon) {
+                        NavigationLink {
+                            PokemonDetailsView(pokemon: pokemon)
+                        } label: {
                             PokemonItem(
                                 number: pokemon.num,
                                 name: pokemon.name,
@@ -33,6 +35,7 @@ struct PokemonsView: View {
                                 img: pokemon.img
                             )
                         }
+
                     }
                 }
             )
@@ -40,15 +43,12 @@ struct PokemonsView: View {
             .padding(.top)
         }
         .navigationTitle(type)
-        .navigationDestination(for: Pokemon.self) { value in
-            PokemonDetailsView(pokemon: value)
-        }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(
             leading:
                 Button(
                     action: {
-                        dismiss()
+                        self.presentationMode.wrappedValue.dismiss()
                     },
                     label: {
                         Image(systemName: "chevron.left")

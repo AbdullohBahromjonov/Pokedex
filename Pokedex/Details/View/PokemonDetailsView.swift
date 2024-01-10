@@ -8,33 +8,37 @@
 import SwiftUI
 
 struct PokemonDetailsView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let pokemon: Pokemon
     
     var body: some View {
         ZStack(alignment: .top) {
-            Color(pokemon.type[0])
-                .ignoresSafeArea()
-                .frame(height: UIScreen.main.bounds.size.height/2)
-                .overlay {
-                    ZStack {
-                        Image("Pokemon w")
-                            .resizable()
-                            .frame(width: 200, height: 200)
-                            .opacity(0.2)
-                            .offset(x: UIScreen.main.bounds.size.width/3)
-                        
-                        RoundedRectangle(cornerRadius: 20)
-                            .foregroundColor(.white)
-                            .frame(width: 200, height: 200)
-                            .opacity(0.2)
-                            .rotationEffect(Angle(degrees: -15))
-                            .offset(x: -UIScreen.main.bounds.size.width/3, y: -UIScreen.main.bounds.size.height/2.2)
-                        
-                        Color.black.opacity(0.05)
-                            .ignoresSafeArea()
-                    }
+            ZStack {
+                VStack {
+                    Color(pokemon.type[0])
+                        .ignoresSafeArea()
+                        .frame(height: UIScreen.main.bounds.size.height/2)
+                    Spacer()
                 }
+                
+                ZStack {
+                    Image("Pokemon w")
+                        .resizable()
+                        .frame(width: 200, height: 200)
+                        .opacity(0.2)
+                        .offset(x: UIScreen.main.bounds.size.width/3)
+                    
+                    RoundedRectangle(cornerRadius: 20)
+                        .foregroundColor(.white)
+                        .frame(width: 200, height: 200)
+                        .opacity(0.2)
+                        .rotationEffect(Angle(degrees: -15))
+                        .offset(x: -UIScreen.main.bounds.size.width/3, y: -UIScreen.main.bounds.size.height/2.2)
+                    
+                    Color.black.opacity(0.05)
+                        .ignoresSafeArea()
+                }
+            }
             
             ScrollView(showsIndicators: false) {
                 VStack() {
@@ -59,20 +63,9 @@ struct PokemonDetailsView: View {
                     }
                     .padding(.horizontal)
                     
-                    AsyncImage(
-                        url: URL(string: pokemon.img.replacingOccurrences(of: "http", with: "https")),
-                        content: { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 300)
-                        },
-                        placeholder: {
-                            ProgressView()
-                                .frame(height: 300)
-                        }
-                    )
-                    .zIndex(1)
+                    ImageView(withURL: pokemon.img.replacingOccurrences(of: "http", with: "https"))
+                        .frame(height: 300)
+                        .zIndex(1)
                     
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Details")
@@ -101,12 +94,17 @@ struct PokemonDetailsView: View {
                             data: pokemon.weaknesses,
                             spacing: 5,
                             alignment: .leading) { weakness in
-                                Text(weakness)
-                                    .foregroundColor(.gray)
-                                    .font(.system(size: 16))
-                                    .padding(5)
-                                    .background(.white.opacity(0.15))
-                                    .cornerRadius(7)
+                                ZStack {
+                                    Color.white.opacity(0.15)
+                                        .clipShape(.capsule)
+                                    
+                                    Text(weakness)
+                                        .foregroundColor(.gray)
+                                        .font(.system(size: 16))
+                                        .cornerRadius(7)
+                                        .padding(5)
+                                        .padding(.horizontal, 5)
+                                }
                             }
                         
                         Text("Spawn")
@@ -152,7 +150,7 @@ struct PokemonDetailsView: View {
             leading:
                 Button(
                     action: {
-                        dismiss()
+                        self.presentationMode.wrappedValue.dismiss()
                     },
                     label: {
                         Image(systemName: "chevron.left")
@@ -165,34 +163,34 @@ struct PokemonDetailsView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         PokemonDetailsView(
             pokemon: Pokemon(
-            id: 1,
-            num: "001",
-            name: "Bulbarus",
-            img: "http://www.serebii.net/pokemongo/pokemon/001.png",
-            type: ["Grass", "Poison"],
-            height: "0.56 m",
-            weight: "3.4 kg",
-            candy: "Bulbasaur Candy",
-            candyCount: 25,
-            egg: Egg.the2KM,
-            spawnChance: 0.69,
-            avgSpawns: 69,
-            spawnTime: "20:00",
-            multipliers: [1.58],
-            weaknesses: [
-                "Fire",
-                "Ice",
-                "Flying",
-                "Psychic"
-            ],
-            nextEvolution: [
-                Evolution(num: "002", name: "Ivysaur"),
-                Evolution(num: "003", name: "Venusaur")
-            ],
-            prevEvolution: nil
+                id: 1,
+                num: "001",
+                name: "Bulbarus",
+                img: "http://www.serebii.net/pokemongo/pokemon/001.png",
+                type: ["Grass", "Poison"],
+                height: "0.56 m",
+                weight: "3.4 kg",
+                candy: "Bulbasaur Candy",
+                candyCount: 25,
+                egg: Egg.the2KM,
+                spawnChance: 0.69,
+                avgSpawns: 69,
+                spawnTime: "20:00",
+                multipliers: [1.58],
+                weaknesses: [
+                    "Fire",
+                    "Ice",
+                    "Flying",
+                    "Psychic"
+                ],
+                nextEvolution: [
+                    Evolution(num: "002", name: "Ivysaur"),
+                    Evolution(num: "003", name: "Venusaur")
+                ],
+                prevEvolution: nil
             )
         )
     }
@@ -244,23 +242,23 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
         var rows: [[Data.Element]] = [[]]
         var currentRow = 0
         var remainingWidth = availableWidth
-
+        
         for element in data {
-          let elementSize = elementsSize[element, default: CGSize(width: availableWidth, height: 1)]
-
-          if remainingWidth - elementSize.width >= 0 {
-            rows[currentRow].append(element)
-          } else {
-            currentRow = currentRow + 1
-            rows.append([element])
-            remainingWidth = availableWidth
-          }
-
-          remainingWidth = remainingWidth - elementSize.width
+            let elementSize = elementsSize[element, default: CGSize(width: availableWidth, height: 1)]
+            
+            if remainingWidth - elementSize.width >= 0 {
+                rows[currentRow].append(element)
+            } else {
+                currentRow = currentRow + 1
+                rows.append([element])
+                remainingWidth = availableWidth
+            }
+            
+            remainingWidth = remainingWidth - elementSize.width
         }
-
+        
         return rows
-      }
+    }
 }
 
 extension View {
@@ -284,8 +282,8 @@ extension View {
 }
 
 private struct SizePreferenceKey: PreferenceKey {
-  static var defaultValue: CGSize = .zero
-  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 }
 
 private struct BlockBackground: ViewModifier {

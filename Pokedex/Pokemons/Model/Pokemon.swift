@@ -11,7 +11,6 @@ struct Pokemons: Codable {
     let pokemon: [Pokemon]
 }
 
-// MARK: - Pokemon
 struct Pokemon: Codable, Hashable {
     let id: Int
     let num, name: String
@@ -47,7 +46,6 @@ enum Egg: String, Codable {
     case the5KM = "5 km"
 }
 
-// MARK: - Evolution
 struct Evolution: Codable, Hashable {
     let num, name: String
 }

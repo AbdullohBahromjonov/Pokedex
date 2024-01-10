@@ -43,20 +43,9 @@ struct PokemonItem: View {
             HStack {
                 Spacer()
                 
-                AsyncImage(
-                    url: URL(string: img.replacingOccurrences(of: "http", with: "https")),
-                    content: { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 100)
-                            .offset(x: 12, y: 20)
-                    },
-                    placeholder: {
-                        ProgressView()
-                            .offset(x: -8, y: 28)
-                    }
-                )
+                ImageView(withURL: img.replacingOccurrences(of: "http", with: "https"))
+                    .frame(height: 100)
+                    .offset(x: 12, y: 20)
             }
         }
         .padding()

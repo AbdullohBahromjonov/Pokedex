@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 class ViewModel: ObservableObject {
     @Published var pokemons: Pokemons? = nil
@@ -15,7 +16,7 @@ class ViewModel: ObservableObject {
         
         let urlRequest = URLRequest(url: url)
 
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             if let error = error {
                 print("Request error: ", error)
                 return
@@ -36,6 +37,33 @@ class ViewModel: ObservableObject {
             }
         }
 
-        dataTask.resume()
+        task.resume()
+    }
+}
+
+class ImageLoader: ObservableObject {
+    var didChange = PassthroughSubject<Data, Never>()
+    var data = Data() {
+        didSet {
+            didChange.send(data)
+        }
+    }
+
+    init(urlString:String) {
+        guard let url = URL(string: urlString) else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            
+            guard let response = response as? HTTPURLResponse else { return }
+            
+            if response.statusCode == 200 {
+                guard let data = data else { return }
+                
+                DispatchQueue.main.async {
+                    self?.data = data
+                }
+            }
+        }
+        task.resume()
     }
 }
