@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+struct Evolution: Codable, Hashable {
+    let num, name: String
+}

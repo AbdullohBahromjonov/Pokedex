@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+struct Pokemons: Codable {
+    let pokemon: [Pokemon]
+}

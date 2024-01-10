@@ -8,6 +8,6 @@
 import Foundation
 
 struct TypeModel: Identifiable {
-    let id: UUID
-    let type: String
+    let id = UUID()
+    let name: String
 }

@@ -8,11 +8,23 @@
 import SwiftUI
 
 struct DetailsInfoView: View {
+    let placeholder: String
+    let value: String
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            Text("\(placeholder):")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.gray)
+            
+            Spacer()
+            
+            Text(value)
+                .font(.system(size: 16, weight: .semibold))
+        }
     }
 }
 
 #Preview {
-    DetailsInfoView()
+    DetailsInfoView(placeholder: "Name", value: "Jhon")
 }

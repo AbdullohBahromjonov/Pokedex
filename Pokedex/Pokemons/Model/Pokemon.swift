@@ -7,10 +7,6 @@
 
 import Foundation
 
-struct Pokemons: Codable {
-    let pokemon: [Pokemon]
-}
-
 struct Pokemon: Codable, Hashable {
     let id: Int
     let num, name: String
@@ -36,16 +32,4 @@ struct Pokemon: Codable, Hashable {
         case nextEvolution = "next_evolution"
         case prevEvolution = "prev_evolution"
     }
-}
-
-enum Egg: String, Codable {
-    case notInEggs = "Not in Eggs"
-    case omanyteCandy = "Omanyte Candy"
-    case the10KM = "10 km"
-    case the2KM = "2 km"
-    case the5KM = "5 km"
-}
-
-struct Evolution: Codable, Hashable {
-    let num, name: String
 }

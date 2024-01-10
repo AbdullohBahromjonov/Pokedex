@@ -9,7 +9,6 @@ import SwiftUI
 
 struct PokemonsView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @EnvironmentObject var viewModel: ViewModel
     
     let pokemons: [Pokemon]
     let type: String
@@ -123,5 +122,4 @@ struct PokemonsView: View {
         ],
         type: "Water"
     )
-    .environmentObject(ViewModel())
 }

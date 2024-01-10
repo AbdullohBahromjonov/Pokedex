@@ -15,37 +15,23 @@ struct TypesView: View {
         GridItem(.flexible())
     ]
     
-    @State var types = [
-        "Water",
-        "Steel",
-        "Rock",
-        "Psychic",
-        "Poison",
-        "Normal",
-        "Ice",
-        "Ground",
-        "Grass",
-        "Ghost",
-        "Flying",
-        "Fire",
-        "Fighting",
-        "Fairy",
-        "Electric",
-        "Dragon",
-        "Dark",
-        "Bug"
-    ]
-    
     var body: some View {
         ScrollView(showsIndicators: false) {
             LazyVGrid(
                 columns: columns,
                 content: {
-                    ForEach(types, id: \.self) { type in
+                    ForEach(types) { type in
                         NavigationLink {
-                            PokemonsView(pokemons: sort(viewModel.pokemons?.pokemon, byType: type), type: type)
+                            PokemonsView(
+                                pokemons: 
+                                    sort(
+                                        viewModel.pokemons?.pokemon,
+                                        byType: type.name
+                                    ),
+                                type: type.name
+                            )
                         } label: {
-                            Text(type)
+                            Text(type.name)
                                 .foregroundColor(.white)
                                 .font(.system(size: 20, weight: .semibold))
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -54,7 +40,7 @@ struct TypesView: View {
                                 .background(
                                     ZStack {
                                         ZStack {
-                                            Color(type)
+                                            Color(type.name)
                                             Color.black.opacity(0.2)
                                         }
                                         
@@ -85,7 +71,9 @@ struct TypesView: View {
     }
 }
 
-
 #Preview {
-    TypesView()
+    NavigationView {
+        TypesView()
+            .environmentObject(ViewModel())
+    }
 }
